@@ -1,0 +1,4 @@
+cp ~/.kube/config ~jenkins/.kube/
+chown -R jenkins: ~jenkins/.kube/
+
+

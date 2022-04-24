@@ -1,0 +1,7 @@
+---
+- hosts: all
+  become: true
+  vars:
+  ansible_become_pass: edureka
+  roles:
+  - role: demo-role

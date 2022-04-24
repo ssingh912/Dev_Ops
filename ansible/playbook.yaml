@@ -1,0 +1,53 @@
+- name: manage user foo on all the hosts
+  vars:
+          mycontent:
+            content1: "hello Everyone!"
+            content2: "Hello there. you are the special one"
+  hosts: all
+  tasks:
+
+          - name: install finger package on ubuntu machine
+            apt:
+                    pkg: apache2
+                    state: present
+            when: ansible_facts['distribution'] == 'Ubuntu'
+          - name: install finger package on centos machine
+            yum:
+                    pkg: httpd
+                    state: present
+            when: ansible_facts['distribution'] == 'CentOS'
+            notify:
+                    - start httpd service
+          - name: file from template
+            template:
+                    src: myhtml.j2
+                    dest: /var/www/html/index.html
+          - name: create user foo
+            user:
+                    name: foo
+
+          - name: create all myfiles using a loop
+            loop:
+                    - /tmp/myfile1
+                    - /tmp/myfile2
+                    - /tmp/myfile3
+            copy:
+                    dest: "{{ item }}"
+                    content: "{{ mycontent['content1'] }} "
+
+          - name: create file in all remotes
+            copy:
+                    dest: /tmp/myfile4
+                    content: "{{ mycontent.content2 }} "
+          - name: create file in all remotes
+            copy:
+                    dest: /tmp/myhostname
+                    content: "{{ ansible_facts.hostname }} "
+          - name: create file in all remotes
+            copy:
+                    dest: /tmp/myReleaseVersion
+                    content: "{{ ansible_facts.distribution }} - {{ ansible_facts.distribution_version }} "
+  handlers:
+          - name: start httpd service
+            service:
+                    name: httpd
